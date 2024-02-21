@@ -5,9 +5,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     <div class="container1">
         <h1>Willkommen zur Dodo-Datenbank</h1>
         <p class="p1">Hier kannst du Informationen zu verschiedenen Laborparametern erhalten.</p>
@@ -116,12 +117,6 @@
                         <th id="haupt-header" class="table-header2">Hauptfunktion</th>
                         <td id="haupt"></td>
                     </tr>
-                    <tr id="meta-t-header" class="table-header2">
-                        <th></th>
-                        <th>Transportierter Metabolit</th>
-                        <th>Interaktion</th>
-                    </tr>
-                    <tbody id="meta-data"></tbody>
                 </table>
             </div>
 
@@ -168,7 +163,7 @@
                     <div id="abreicherung-boxes" class="abreicherung-container"></div>
                 </div>
             </div>
-
+            <button id="deleteEntryButton" class="confirmation-button" onclick="deleteEntry()">Eintrag löschen</button>
         </div>
         <p class="p3" id="error-message" style="display: none;">
             Die Datenbank konnte nicht vollständig geupdatet werden. Bitte LQu Bescheid geben.
@@ -240,14 +235,6 @@
                     <td><textarea type="text" id="new_haupt"></textarea></td>
                 </tr>
                 <tr>
-                    <th id="new_meta-header" class="table-header2-new">Transportierter Metabolit</th>
-                    <td><input type="text" id="new_meta"></td>
-                </tr>
-                <tr>
-                    <th id="new_inter-header" class="table-header2-new">Interaktion</th>
-                    <td><input type="text" id="new_inter"></td>
-                </tr>
-                <tr>
                     <th id="new_diagnostik-header" class="table-header1-new">Diagnostik</th>
                 </tr>
                 <tr>
@@ -295,7 +282,6 @@
     <div id="customPopupMethode" class="custom-popup" style="display: none;">
         <div class="popup-content">
             <p>Bist du sicher, dass du speichern möchtest?</p>
-            <p class="site-info">(Nach dem Speichern bitte Seite aktualisieren mit STRG + F5)</p>
             <button class="confirmation-button" id="confirmYesMethode">Ja</button>
             <button class="confirmation-button" id="confirmNoMethode">Nein</button>
         </div>
@@ -304,7 +290,6 @@
     <div id="customPopup" class="custom-popup" style="display: none;">
         <div class="popup-content">
             <p>Bist du sicher, dass du speichern möchtest?</p>
-            <p class="site-info">(Nach dem Speichern bitte Seite aktualisieren mit STRG + F5)</p>
             <button class="confirmation-button" id="confirmYes">Ja</button>
             <button class="confirmation-button" id="confirmNo">Nein</button>
         </div>
@@ -346,6 +331,17 @@
             <p>Juhu, ein neuer Eintrag! <br> Soll dieser jetzt gespeichert werden?</p>
             <button class="confirmation-button" id="confirmYesNewEntry">Ja</button>
             <button class="confirmation-button" id="confirmNoNewEntry">Nein</button>
+        </div>
+    </div>
+
+    <div id="popupEintragLöschen" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p class="achtung-info"><strong>*** Achtung! ***</strong></p>
+            <p>Du bist dabei, den Eintrag zu löschen.</p>
+            <p class="additional-info">Zum Löschen tippe "Dodos are the best" ein.</p>
+            <input type="text" id="deleteCheck">
+            <button class="confirmation-button" id="confirmDelete">Löschen</button>
+            <button class="confirmation-button" id="doNotDelete">Zurück</button>
         </div>
     </div>
 

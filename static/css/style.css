@@ -28,6 +28,16 @@ td input, textarea {
     width: 300px;
 }
 
+.additional-info {
+    font-style: italic;
+    font-size: 12px;
+}
+
+.achtung-info {
+    font-size: 22px;
+    font-style: bold;
+}
+
 /* Überschrift */
 .container1 {
     background-color: #2D3E4E;
@@ -127,6 +137,15 @@ td input, textarea {
     padding: 5px;
     width: 80%;
     margin-left: 50px;
+}
+
+#deleteEntryButton {
+    display: none;
+    margin-bottom: 10px;
+}
+
+#doNotDelete {
+    margin-top: 10px;
 }
 
 .category-section table th:first-child {
@@ -451,10 +470,4 @@ h1 {
     color: #2D3E4E;
     margin-left: 14px;
     transition: all 0.3s ease-in-out;
-}
-
-.site-info {
-    font-size: 14px;
-    color: #E09E50;
-    font-style: italic;
 }

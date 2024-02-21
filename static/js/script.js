@@ -130,9 +130,6 @@ function openCustomEditPopup(entry, callback) {
             body: JSON.stringify({ textTitle: title, textDescription: description, input: userInput, oldMethodTitle: oldTitle }),
         })
         .then(response => response.text())
-        .then(data => {
-            // Handle the response if needed
-        })
         .catch(error => {
             console.error('Error:', error);
         });
@@ -192,6 +189,8 @@ function executePythonFunction() {
         document.getElementById('name').textContent = data['Name'].name;
         document.getElementById('namen').textContent = data['Name'].namen;
         document.getElementById('abk').textContent = data['Name'].abk;
+        // Show delete button
+        document.getElementById('deleteEntryButton').style.display='flex'
 
         if (categories.includes('Analytik')) {
             // Show the Analytik table header
@@ -211,43 +210,45 @@ function executePythonFunction() {
             tableBody.innerHTML = '';
 
             // Iterate through the data and populate the table
-            data['Analytik'].forEach(entry => {
-                var row = document.createElement('tr');
+            if (Array.isArray(data['Analytik']) && data['Analytik'].length > 0) {
+                data['Analytik'].forEach(entry => {
+                    var row = document.createElement('tr');
 
-                // Add cells for each field in the table
-                var nameCell = document.createElement('td');
-                nameCell.textContent = entry['name'];
-                row.appendChild(nameCell);
+                    // Add cells for each field in the table
+                    var nameCell = document.createElement('td');
+                    nameCell.textContent = entry['name'];
+                    row.appendChild(nameCell);
 
-                var laborCell = document.createElement('td');
-                laborCell.textContent = entry['labor'];
-                row.appendChild(laborCell);
+                    var laborCell = document.createElement('td');
+                    laborCell.textContent = entry['labor'];
+                    row.appendChild(laborCell);
 
-                var methodeCell = document.createElement('td');
-                methodeCell.textContent = entry['methode'];
-                row.appendChild(methodeCell);
+                    var methodeCell = document.createElement('td');
+                    methodeCell.textContent = entry['methode'];
+                    row.appendChild(methodeCell);
 
-                var messsystemCell = document.createElement('td');
-                messsystemCell.textContent = entry['messsystem'];
-                row.appendChild(messsystemCell);
+                    var messsystemCell = document.createElement('td');
+                    messsystemCell.textContent = entry['messsystem'];
+                    row.appendChild(messsystemCell);
 
-                var herstellerCell = document.createElement('td');
-                herstellerCell.textContent = entry['hersteller'];
-                row.appendChild(herstellerCell);
+                    var herstellerCell = document.createElement('td');
+                    herstellerCell.textContent = entry['hersteller'];
+                    row.appendChild(herstellerCell);
 
-                var preisCell = document.createElement('td');
-                preisCell.textContent = entry['preis'];
-                row.appendChild(preisCell);
+                    var preisCell = document.createElement('td');
+                    preisCell.textContent = entry['preis'];
+                    row.appendChild(preisCell);
 
-                // Add a class to the cells in the 'Analytik' table
-                laborCell.classList.add('special-cell');
-                methodeCell.classList.add('special-cell');
-                messsystemCell.classList.add('special-cell');
-                herstellerCell.classList.add('special-cell');
-                preisCell.classList.add('special-cell');
+                    // Add a class to the cells in the 'Analytik' table
+                    laborCell.classList.add('special-cell');
+                    methodeCell.classList.add('special-cell');
+                    messsystemCell.classList.add('special-cell');
+                    herstellerCell.classList.add('special-cell');
+                    preisCell.classList.add('special-cell');
 
-                tableBody.appendChild(row);
-            });
+                    tableBody.appendChild(row);
+                });
+            }
 
             // Display the table data explicitly
             tableBody.style.display = 'table-row-group'; // Or set the appropriate display property
@@ -292,57 +293,9 @@ function executePythonFunction() {
             document.getElementById('immun').textContent = data['Funktion']['Immunsystem'];
             document.getElementById('haupt').textContent = data['Funktion']['Hauptfunktion'];
 
-            // Transport als Hauptfunktion
-            var hauptfunktion = data['Funktion']['Hauptfunktion'];
-            if (hauptfunktion.includes('Transport')) {
-                // Show the trans. Metabolite table header
-                document.getElementById('meta-t-header').style.display = 'table-row';
-
-                // Get the header row element
-                var headerRowMeta = document.getElementById('meta-t-header');
-
-                // Add a class to the header row
-                headerRowMeta.classList.add('special-header-row');
-
-                // Get the table body element
-                var tableBody = document.getElementById('meta-data');
-                // Clear any previous data
-                tableBody.innerHTML = '';
-
-                // Iterate through the data and populate the table
-                data['Transportierte Metabolite'].forEach(entry => {
-                    var row = document.createElement('tr');
-
-                    // Add cells for each field in the table
-                    var nameCell = document.createElement('td');
-                    nameCell.textContent = entry['name'];
-                    row.appendChild(nameCell);
-
-                    var metabolitCell = document.createElement('td');
-                    metabolitCell.textContent = entry['metabolit_name'];
-                    row.appendChild(metabolitCell);
-
-                    var interaktionCell = document.createElement('td');
-                    interaktionCell.textContent = entry['interaktion'];
-                    row.appendChild(interaktionCell);
-
-                    // Add a class to the cells
-                    metabolitCell.classList.add('special-cell');
-                    interaktionCell.classList.add('special-cell');
-
-                    tableBody.appendChild(row);
-                });
-
-                // Display the table data explicitly
-                tableBody.style.display = 'table-row-group'; // Or set the appropriate display property
-            } else {
-                // hide data
-                document.getElementById('meta-data').style.display = 'none';
-                document.getElementById('meta-t-header').style.display = 'none';
-            }
         } else {
             // If Funktion checkbox is unchecked, hide the table data
-            ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt', 'meta-data', 'meta-t-header'].forEach(cat => {
+            ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt'].forEach(cat => {
                 document.getElementById(cat).style.display = 'none';
             });
         }
@@ -501,8 +454,6 @@ function displayNewEntryMessage() {
             var elek = document.getElementById('new_elek').value;
             var immun = document.getElementById('new_immun').value;
             var haupt = document.getElementById('new_haupt').value;
-            var meta = document.getElementById('new_meta').value;
-            var inter = document.getElementById('new_inter').value;
             var biomat = document.getElementById('new_biomat').value;
             var ref = document.getElementById('new_ref').value;
             var hoch = document.getElementById('new_hohewerte').value;
@@ -515,7 +466,7 @@ function displayNewEntryMessage() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ paraName: name, paraNamen: weitereNamen, paraAbk: abk, molMasse: molmasse, aminoAcids: aminos, oligomerisierung: oligo, glykolisierung: glyko, bindMotiv: bind, enzymFunktion: enzym, synthGewebe: synthGew, elektrophorese: elek, immunsystem: immun, hauptfunktion: haupt, transMeta: meta, interaktion: inter, biomaterial: biomat, referenz:ref, hoheWerte: hoch, niedrigeWerte: niedrig, methodenName: methName, methode: meth}),
+                body: JSON.stringify({ paraName: name, paraNamen: weitereNamen, paraAbk: abk, molMasse: molmasse, aminoAcids: aminos, oligomerisierung: oligo, glykolisierung: glyko, bindMotiv: bind, enzymFunktion: enzym, synthGewebe: synthGew, elektrophorese: elek, immunsystem: immun, hauptfunktion: haupt, biomaterial: biomat, referenz:ref, hoheWerte: hoch, niedrigeWerte: niedrig,methodenName: methName, methode: meth}),
             })
             .then(response => response.text())
             .catch(error => {
@@ -523,7 +474,8 @@ function displayNewEntryMessage() {
             });
         }
 
-        goBackToOriginal();
+        location.reload();
+        //goBackToOriginal();
 
     }
 }
@@ -685,6 +637,7 @@ function neueMethode() {
 
         // Update database
         updateDatabase(methodenName, methode);
+
     };
 
     function updateDatabase(title, description) {
@@ -719,16 +672,13 @@ function methodeLöschen() {
     // Declare confirmPopup in the outer scope
     var confirmPopup;
 
-    // Save button functionality
-    deleteButton.onclick = function () {
-        confirmPopup = document.getElementById('popupLöschen');
+    confirmPopup = document.getElementById('popupLöschen');
 
-        // Display the confirmation popup
-        confirmPopup.style.display = 'block';
-        confirmPopup.style.position = 'fixed';
-        confirmPopup.style.padding = '15%';
-        confirmPopup.style.zIndex = '1001';
-    };
+    // Display the confirmation popup
+    confirmPopup.style.display = 'block';
+    confirmPopup.style.position = 'fixed';
+    confirmPopup.style.padding = '15%';
+    confirmPopup.style.zIndex = '1001';
 
     var confirmYesButton = document.getElementById('confirmYesDelete');
     var confirmNoButton = document.getElementById('confirmNoDelete');
@@ -792,5 +742,46 @@ function methodeLöschen() {
         .catch(error => {
             console.error('Error:', error);
         });
+    }
+}
+
+function deleteEntry() {
+    var popupDeleteEntry = document.getElementById('popupEintragLöschen')
+
+    popupDeleteEntry.style.display = 'block';
+    popupDeleteEntry.style.position = 'fixed';
+    popupDeleteEntry.style.padding = '15%';
+    popupDeleteEntry.style.zIndex = '1001';
+
+    var cancelDelete = document.getElementById('doNotDelete');
+    cancelDelete.onclick = function() {
+        popupDeleteEntry.style.display = 'none';
+    }
+
+    var confirmDeleteEntry = document.getElementById('confirmDelete')
+    confirmDeleteEntry.onclick = function() {
+        var deleteInput = document.getElementById('deleteCheck').value;
+        if (deleteInput === 'Dodos are the best') {
+            //finallyDeleteEntry();
+            popupDeleteEntry.style.display = 'none';
+
+            deleteEntryDatabase();
+            location.reload();
+        }
+    }
+
+    function deleteEntryDatabase() {
+        var userInput = document.getElementById('user-input').value;
+        fetch('/delete_entry', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({input: userInput}),
+        })
+        .then(response => response.text())
+        .catch(error => {
+            console.error('Error:', error);
+        });        
     }
 }
