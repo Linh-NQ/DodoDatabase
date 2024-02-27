@@ -223,6 +223,10 @@ function executePythonFunction() {
                     laborCell.textContent = entry['labor'];
                     row.appendChild(laborCell);
 
+                    var labNameCell = document.createElement('td');
+                    labNameCell.textContent = entry['name_labor'];
+                    row.appendChild(labNameCell);
+
                     var methodeCell = document.createElement('td');
                     methodeCell.textContent = entry['methode'];
                     row.appendChild(methodeCell);
@@ -241,6 +245,7 @@ function executePythonFunction() {
 
                     // Add a class to the cells in the 'Analytik' table
                     laborCell.classList.add('special-cell');
+                    labNameCell.classList.add('special-cell');
                     methodeCell.classList.add('special-cell');
                     messsystemCell.classList.add('special-cell');
                     herstellerCell.classList.add('special-cell');
@@ -422,6 +427,35 @@ function goBackToOriginal() {
     document.querySelector('.new-entry').style.display = 'none';
     document.querySelector('.container5').style.display = 'none';
 }
+
+function submitForm() {
+    var newName = document.getElementById("new_name").value;
+
+    if (newName.length > 0) {
+        fetch('/entry_check', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ paraName: newName }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.exists) {
+                alert("Dieser Eintrag existiert bereits.");
+            } else {
+                displayNewEntryMessage();
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    } else {
+        alert("Bitte gib einen Namen für den Parameter ein");
+        return false;
+    }
+}
+
 
 function displayNewEntryMessage() {
     var newEntrySave = document.getElementById('popupNeuerEintrag');

@@ -38,6 +38,15 @@ td input, textarea {
     font-style: bold;
 }
 
+.info-suche {
+    line-height: 20px;
+    margin-left: 50px;
+    background-image: url('O:/Forschung%20&%20Entwicklung/Entwicklung/Software-Entwicklung/Dodo_Datenbank/static/images/dodo_info.png');
+    background-size: cover;
+    background-position: center;
+
+}
+
 /* Überschrift */
 .container1 {
     background-color: #2D3E4E;
@@ -49,10 +58,10 @@ td input, textarea {
 /* Sucheingabe */
 .container2 {
     background-color: #E8ECEB;
+    padding-left: 25%;
     padding-top: 20px;
     display: flex;
     align-items: center;
-    justify-content: center;
 }
 
 /* Filteroptionen */
@@ -92,7 +101,7 @@ td input, textarea {
 
 /* Dropdown content (hidden by default) */
 .dropdown-content {
-    font-size: 14px;
+    font-size: 12px;
     width: 150%;
     display: none;
     position: absolute;
@@ -103,6 +112,8 @@ td input, textarea {
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
     transform: translate(-25%, 0%);
+    max-height: 400px;
+    overflow-y: auto;
 }
 
 /* Links inside the dropdown */
@@ -256,6 +267,19 @@ h1 {
 .p3 {
     font-size: 16px;
     color: #E09E50;
+    text-align: center;
+}
+
+.p4 {
+    font-size: 13px;
+    color: #2D3E4E;
+    text-align: center;
+}
+
+.p5 {
+    font-size: 12px;
+    font-style: italic;
+    color: #2D3E4E;
     text-align: center;
 }
 

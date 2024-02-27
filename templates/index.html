@@ -5,7 +5,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
@@ -21,6 +20,10 @@
         </div>
         <button onclick="executePythonFunction()" class="action-button">Suche</button>
         <button onclick="neuerEintrag()" class="action-button">Neuer Eintrag</button>
+        <div class="info-suche">
+            <p class="p4">Für deinen Suchbegriff <br> gibt es keine Vorschläge? <br> Klick trotzdem mal auf "Suche".</p>
+            <p class="p5">(Vielleicht hat dieser eine andere Bezeichung)</p>
+        </div>
     </div>
     <div class="new-entry" style="display: none;">
         <button onclick="goBackToOriginal()" class="action-button right-aligned">Zurück</button>
@@ -148,6 +151,7 @@
                     <tr id="analytik-t-header" class="table-header2-ana">
                         <th></th>
                         <th>Labor</th>
+                        <th>Parameterbezeichnung</th>
                         <th>Methode</th>
                         <th>Messsystem</th>
                         <th>Hersteller</th>
@@ -178,7 +182,7 @@
                 </tr>
                 <tr>
                     <th id="new_name-header" class="table-header2-new">Name</th>
-                    <td><input type="text" id="new_name"></td>
+                    <td><input type="text" id="new_name" required></td>
                 </tr>
                 <tr>
                     <th id="new_namen-header" class="table-header2-new">Weitere Namen</th>
@@ -266,7 +270,7 @@
                 </tr>
             </table>
             <div class="save-button-container">
-                <button class="action-button" onclick="displayNewEntryMessage()">Speichern</button>
+                <button class="action-button" onclick="submitForm()">Speichern</button>
             </div> 
         </div> 
     </div>
