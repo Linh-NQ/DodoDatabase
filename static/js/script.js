@@ -167,6 +167,8 @@ function updateAbreicherungBox(entry, updatedContent) {
 
 
 function executePythonFunction() {
+    var dodoTalks = document.getElementById('theDodoTalks');
+    dodoTalks.style.display = 'none';
 
     var userInput = document.getElementById('user-input').value;
     var categories = Array.from(document.querySelectorAll('input[name=category]:checked')).map(checkbox => checkbox.value);
@@ -360,6 +362,7 @@ function executePythonFunction() {
 function showSuggestions() {
     var userInput = document.getElementById('user-input').value.toLowerCase().trim();
     var dropdown = document.getElementById('suggestions');
+    var dodoTalks = document.getElementById('theDodoTalks');
 
     if (userInput.length === 0) {
         dropdown.innerHTML = ''; // Clear suggestions if input is empty
@@ -391,9 +394,11 @@ function showSuggestions() {
         if (suggestionHTML !== '') {
             dropdown.innerHTML = suggestionHTML;
             dropdown.style.display = 'block';
+            dodoTalks.style.display = 'none'; // Hide theDodoTalks if suggestions are present
         } else {
             dropdown.innerHTML = ''; // No matching suggestions, hide the dropdown
             dropdown.style.display = 'none';
+            dodoTalks.style.display = 'block'; // Show theDodoTalks if no suggestions are present
         }
     })
     .catch(error => {
@@ -405,6 +410,7 @@ function selectSuggestion(selectedValue) {
     document.getElementById('user-input').value = selectedValue;
     document.getElementById('suggestions').style.display = 'none';
 }
+
 
 function neuerEintrag() {
     // Hide elements from containers 2, 3, and 4

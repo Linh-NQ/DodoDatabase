@@ -41,10 +41,16 @@ td input, textarea {
 .info-suche {
     line-height: 20px;
     margin-left: 50px;
-    background-image: url('O:/Forschung%20&%20Entwicklung/Entwicklung/Software-Entwicklung/Dodo_Datenbank/static/images/dodo_info.png');
-    background-size: cover;
+    background-image: url('https://github.com/Linh-NQ/DodoDatabase/blob/main/static/images/dodo_info.png?raw=true');
+    background-size: contain;
     background-position: center;
+    background-repeat: no-repeat;
+    width: 400px;
+    height: 150px;
+}
 
+.talking-dodo-container {
+    display: none;
 }
 
 /* Überschrift */
@@ -148,6 +154,10 @@ td input, textarea {
     padding: 5px;
     width: 80%;
     margin-left: 50px;
+}
+
+#allgemein-plus-dodo {
+    display: inline-flex;
 }
 
 #deleteEntryButton {
@@ -271,12 +281,15 @@ h1 {
 }
 
 .p4 {
+    padding-top: 10px;
+    padding-right: 110px;
     font-size: 13px;
     color: #2D3E4E;
     text-align: center;
 }
 
 .p5 {
+    padding-right: 90px;
     font-size: 12px;
     font-style: italic;
     color: #2D3E4E;
