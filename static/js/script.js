@@ -167,196 +167,287 @@ function updateAbreicherungBox(entry, updatedContent) {
 
 
 function executePythonFunction() {
-    var dodoTalks = document.getElementById('theDodoTalks');
-    dodoTalks.style.display = 'none';
+    // falls vorher gesucht wurde und keine Einträge vorhanden sind, muss Nachricht aus GUI entfernt werden
+    document.querySelector('.infoNoEntries').style.display = 'none';
+    document.querySelector('.infoSimilarEntries').style.display = 'none';
+    document.getElementById("dodoCookie").style.display = 'none';
+    document.getElementById("infoNoSearch").style.display = 'none';
+
+    document.getElementById('theDodoTalks').style.display = 'none';
 
     var userInput = document.getElementById('user-input').value;
     var categories = Array.from(document.querySelectorAll('input[name=category]:checked')).map(checkbox => checkbox.value);
 
-    fetch('/execute-function', {
-        method: 'POST',
-        body: JSON.stringify({ input: userInput, categories: categories }),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Show the headers after data is loaded
-        document.getElementById('allg-header').style.display = 'table-cell';
-        document.getElementById('name-header').style.display = 'table-cell';
-        document.getElementById('namen-header').style.display = 'table-cell';
-        document.getElementById('abk-header').style.display = 'table-cell';
-        // Show data of the table namen
-        document.getElementById('name').textContent = data['Name'].name;
-        document.getElementById('namen').textContent = data['Name'].namen;
-        document.getElementById('abk').textContent = data['Name'].abk;
-        // Show delete button
-        document.getElementById('deleteEntryButton').style.display='flex'
+    if (userInput === '') {
+        var noInfo = document.getElementById("infoNoSearch");
+        noInfo.style.display = 'block';
+        noInfo.style.position = 'fixed';
+        noInfo.style.bottom = '0';
+        noInfo.style.paddingBottom = '100px';
+        noInfo.style.zIndex = '1001';
+    } else {
 
-        if (categories.includes('Analytik')) {
-            // Show the Analytik table header
-            document.getElementById('analytik-header').style.display = 'table-cell';
-            document.getElementById('analytik-t-header').style.display = 'table-row';
-
-            // Get the header row element
-            var headerRow = document.getElementById('analytik-t-header');
-
-            // Add a class to the header row
-            headerRow.classList.add('special-header-row');
-
-            // Get the table body element
-            var tableBody = document.getElementById('analytik-data');
-
-            // Clear any previous data
-            tableBody.innerHTML = '';
-
-            // Iterate through the data and populate the table
-            if (Array.isArray(data['Analytik']) && data['Analytik'].length > 0) {
-                data['Analytik'].forEach(entry => {
-                    var row = document.createElement('tr');
-
-                    // Add cells for each field in the table
-                    var nameCell = document.createElement('td');
-                    nameCell.textContent = entry['name'];
-                    row.appendChild(nameCell);
-
-                    var laborCell = document.createElement('td');
-                    laborCell.textContent = entry['labor'];
-                    row.appendChild(laborCell);
-
-                    var labNameCell = document.createElement('td');
-                    labNameCell.textContent = entry['name_labor'];
-                    row.appendChild(labNameCell);
-
-                    var methodeCell = document.createElement('td');
-                    methodeCell.textContent = entry['methode'];
-                    row.appendChild(methodeCell);
-
-                    var messsystemCell = document.createElement('td');
-                    messsystemCell.textContent = entry['messsystem'];
-                    row.appendChild(messsystemCell);
-
-                    var herstellerCell = document.createElement('td');
-                    herstellerCell.textContent = entry['hersteller'];
-                    row.appendChild(herstellerCell);
-
-                    var preisCell = document.createElement('td');
-                    preisCell.textContent = entry['preis'];
-                    row.appendChild(preisCell);
-
-                    // Add a class to the cells in the 'Analytik' table
-                    laborCell.classList.add('special-cell');
-                    labNameCell.classList.add('special-cell');
-                    methodeCell.classList.add('special-cell');
-                    messsystemCell.classList.add('special-cell');
-                    herstellerCell.classList.add('special-cell');
-                    preisCell.classList.add('special-cell');
-
-                    tableBody.appendChild(row);
-                });
+        fetch('/execute-function', {
+            method: 'POST',
+            body: JSON.stringify({ input: userInput, categories: categories }),
+            headers: {
+                'Content-Type': 'application/json'
             }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data === null) {
+                // hide displayed data
+                ['allg-header', 'name-header', 'namen-header', 'abk-header', 'name', 'namen', 'abk','analytik-header', 'analytik-t-header', 'analytik-data', 'biochemie-header', 'mol_masse-header', 'aminos-header', 'oligo-header', 'glyko-header', 'bind-header', 'enzym-header', 'mol_masse', 'aminos', 'oligo', 'glyko', 'bind', 'enzym', 'funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt', 'diagnostik-header', 'biomat-header', 'ref-header', 'hohe_werte-header', 'niedrige_werte-header', 'biomat', 'ref', 'hohe_werte', 'niedrige_werte', 'abreicherung-section', 'abr-header', 'deleteEntryButton'].forEach(cat => {
+                    document.getElementById(cat).style.display = 'none';
+                })
 
-            // Display the table data explicitly
-            tableBody.style.display = 'table-row-group'; // Or set the appropriate display property
-        } else {
-            // If Analytik checkbox is unchecked, hide the table data
-            document.getElementById('analytik-data').style.display = 'none';
-            document.getElementById('analytik-header').style.display = 'none';
-            document.getElementById('analytik-t-header').style.display = 'none';
-        }
+                // Dodo easter eggs messages
+                var dodoInfo = document.getElementById("dodoCookie");
+                dodoInfo.style.display = 'block';
+                dodoInfo.style.position = 'fixed';
+                dodoInfo.style.bottom = '0';
+                dodoInfo.style.paddingBottom = '100px';
+                dodoInfo.style.zIndex = '1001';
 
-        // table biochemie
-        if (categories.includes('Biochemie')) {
-            // Show the table cells
-            ['biochemie-header', 'mol_masse-header', 'aminos-header', 'oligo-header', 'glyko-header', 'bind-header', 'enzym-header', 'mol_masse', 'aminos', 'oligo', 'glyko', 'bind', 'enzym'].forEach(cat => {
-                document.getElementById(cat).style.display = 'table-cell';
-            });
+                var possibleMessages = [
+                    "Ich mag Kekse.",
+                    "Das Dodo-Team hat sich Kekse verdient.",
+                    "Hiii, wo sind meine Kekse?",
+                    "KEKSE!",
+                    "Als Belohnung nehme ich Kekse.",
+                    "Lecker Kekse!"
+                    ];
+                var pElement = document.querySelector('#dodoCookie .info-eintrag .p4');
 
-            // Display data for Biochemie
-            document.getElementById('mol_masse').textContent = data['Biochemie']['Molekulare Masse'];
-            document.getElementById('aminos').textContent = data['Biochemie']['Aminosäuren'];
-            document.getElementById('oligo').textContent = data['Biochemie']['Oligomerisierung'];
-            document.getElementById('glyko').textContent = data['Biochemie']['Glykolisierung'];
-            document.getElementById('bind').textContent = data['Biochemie']['Bindungsmotiv'];
-            document.getElementById('enzym').textContent = data['Biochemie']['Enzymfunktion'];
-        } else {
-            // If Biochemie checkbox is unchecked, hide the table data
-            ['biochemie-header', 'mol_masse-header', 'aminos-header', 'oligo-header', 'glyko-header', 'bind-header', 'enzym-header', 'mol_masse', 'aminos', 'oligo', 'glyko', 'bind', 'enzym'].forEach(cat => {
-                document.getElementById(cat).style.display = 'none';
-            });
-        }
+                // Randomly select a message from the array
+                var randomIndex = Math.floor(Math.random() * possibleMessages.length);
+                var randomMessage = possibleMessages[randomIndex];
 
-        // table funktionen
-        if (categories.includes('Funktion')) {
-            // Show the table cells
-            ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt'].forEach(cat => {
-                document.getElementById(cat).style.display = 'table-cell';
-            });
+                // Set the text content of the <p> element to the random message
+                pElement.textContent = randomMessage;
 
-            // Display data for Funktion
-            document.getElementById('synth_gewebe').textContent = data['Funktion']['Synthetisierendes Gewebe'];
-            document.getElementById('elek').textContent = data['Funktion']['Elektrophorese'];
-            document.getElementById('immun').textContent = data['Funktion']['Immunsystem'];
-            document.getElementById('haupt').textContent = data['Funktion']['Hauptfunktion'];
 
-        } else {
-            // If Funktion checkbox is unchecked, hide the table data
-            ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt'].forEach(cat => {
-                document.getElementById(cat).style.display = 'none';
-            });
-        }
-    
-        // table diagnostik
-         if (categories.includes('Diagnostik')) {
-            // Show the table cells
-            ['diagnostik-header', 'biomat-header', 'ref-header', 'hohe_werte-header', 'niedrige_werte-header', 'biomat', 'ref', 'hohe_werte', 'niedrige_werte'].forEach(cat => {
-                document.getElementById(cat).style.display = 'table-cell';
-            });
+                // ähnlich geschriebene Parameter anzeigen, falls vorhanden
+                 fetch('/check_similar_parameter', {
+                    method: 'POST',
+                    body: JSON.stringify({ input: userInput }),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var infoNoEntries = document.querySelector('.infoNoEntries');
+                    var infoSimilarEntries = document.querySelector('.infoSimilarEntries');
 
-            // Display data for Diagnostik
-            document.getElementById('biomat').textContent = data['Diagnostik']['Biomaterial'];
-            document.getElementById('ref').textContent = data['Diagnostik']['Referenzbereich'];
-            document.getElementById('hohe_werte').textContent = data['Diagnostik']['Erhöhte Werte'];
-            document.getElementById('niedrige_werte').textContent = data['Diagnostik']['Erniedrigte Werte'];
-        } else {
-            // If Diagnbostik checkbox is unchecked, hide the table data
-            ['diagnostik-header', 'biomat-header', 'ref-header', 'hohe_werte-header', 'niedrige_werte-header', 'biomat', 'ref', 'hohe_werte', 'niedrige_werte'].forEach(cat => {
-                document.getElementById(cat).style.display = 'none';
-            });
-        }
-
-        // data abreicherung
-
-        if (categories.includes('Abreicherung')) {
-            var abreicherungData = data['Abreicherung'];
-            if (abreicherungData) {
-                document.getElementById('abreicherung-section').style.display = 'block';
-                document.getElementById('abr-header').style.display = 'block';
-
-                var abreicherungBoxes = document.getElementById('abreicherung-boxes');
-                abreicherungBoxes.innerHTML = ''; // Clear previous content
-
-                // Check if the Abreicherung data is an array or a single object
-                if (Array.isArray(abreicherungData)) {
-                    // If it's an array, create boxes for each entry
-                    abreicherungData.forEach(function(entry) {
-                        createAbreicherungBox(abreicherungBoxes, entry);
-                    });
-                } else {
-                    // If it's a single object, create a box for that entry
-                    createAbreicherungBox(abreicherungBoxes, abreicherungData);
-                }
+                    if (data.length === 0) {
+                        infoNoEntries.style.display = 'block';                         
+                    } else {
+                        var ul = infoSimilarEntries.querySelector('ul');
+                        // Clear the existing list items by setting innerHTML to an empty string
+                        if (!ul) {
+                            ul = document.createElement('ul');
+                            infoSimilarEntries.appendChild(ul);
+                        }
+                        while (ul.firstChild) {
+                            ul.removeChild(ul.firstChild);
+                        }
+                        infoSimilarEntries.style.display = 'block';
+                        data.forEach(entry => {
+                            var li = document.createElement('li');
+                            li.classList.add('p4');
+                            li.textContent = entry;
+                            li.style.color = '#8CBDB9';
+                            li.style.fontWeight = 'bold';
+                            li.style.listStylePosition = 'inside';
+                            ul.appendChild(li);
+                        });
+                        infoSimilarEntries.appendChild(ul);
+                    }
+                })
+        
             } else {
-                document.getElementById('abreicherung-section').style.display = 'none';
+                // Show the headers after data is loaded
+                document.getElementById('allg-header').style.display = 'table-cell';
+                document.getElementById('name-header').style.display = 'table-cell';
+                document.getElementById('namen-header').style.display = 'table-cell';
+                document.getElementById('abk-header').style.display = 'table-cell';
+                document.getElementById('name').style.display = 'table-cell';
+                document.getElementById('namen').style.display = 'table-cell';
+                document.getElementById('abk').style.display = 'table-cell';
+                // Show data of the table namen
+                document.getElementById('name').textContent = data['Name'].name;
+                document.getElementById('namen').textContent = data['Name'].namen;
+                document.getElementById('abk').textContent = data['Name'].abk;
+                // Show delete button
+                document.getElementById('deleteEntryButton').style.display='flex'
+
+                if (categories.includes('Analytik')) {
+                    // Show the Analytik table header
+                    document.getElementById('analytik-header').style.display = 'table-cell';
+                    document.getElementById('analytik-t-header').style.display = 'table-row';
+
+                    // Get the header row element
+                    var headerRow = document.getElementById('analytik-t-header');
+
+                    // Add a class to the header row
+                    headerRow.classList.add('special-header-row');
+
+                    // Get the table body element
+                    var tableBody = document.getElementById('analytik-data');
+
+                    // Clear any previous data
+                    tableBody.innerHTML = '';
+
+                    // Iterate through the data and populate the table
+                    if (Array.isArray(data['Analytik']) && data['Analytik'].length > 0) {
+                        data['Analytik'].forEach(entry => {
+                            var row = document.createElement('tr');
+
+                            // Add cells for each field in the table
+                            var nameCell = document.createElement('td');
+                            nameCell.textContent = entry['name'];
+                            row.appendChild(nameCell);
+
+                            var laborCell = document.createElement('td');
+                            laborCell.textContent = entry['labor'];
+                            row.appendChild(laborCell);
+
+                            var labNameCell = document.createElement('td');
+                            labNameCell.textContent = entry['name_labor'];
+                            row.appendChild(labNameCell);
+
+                            var methodeCell = document.createElement('td');
+                            methodeCell.textContent = entry['methode'];
+                            row.appendChild(methodeCell);
+
+                            var messsystemCell = document.createElement('td');
+                            messsystemCell.textContent = entry['messsystem'];
+                            row.appendChild(messsystemCell);
+
+                            var herstellerCell = document.createElement('td');
+                            herstellerCell.textContent = entry['hersteller'];
+                            row.appendChild(herstellerCell);
+
+                            var preisCell = document.createElement('td');
+                            preisCell.textContent = entry['preis'];
+                            row.appendChild(preisCell);
+
+                            // Add a class to the cells in the 'Analytik' table
+                            laborCell.classList.add('special-cell');
+                            labNameCell.classList.add('special-cell');
+                            methodeCell.classList.add('special-cell');
+                            messsystemCell.classList.add('special-cell');
+                            herstellerCell.classList.add('special-cell');
+                            preisCell.classList.add('special-cell');
+
+                            tableBody.appendChild(row);
+                        });
+                    }
+
+                    // Display the table data explicitly
+                    tableBody.style.display = 'table-row-group'; // Or set the appropriate display property
+                } else {
+                    // If Analytik checkbox is unchecked, hide the table data
+                    document.getElementById('analytik-data').style.display = 'none';
+                    document.getElementById('analytik-header').style.display = 'none';
+                    document.getElementById('analytik-t-header').style.display = 'none';
+                }
+
+                // table biochemie
+                if (categories.includes('Biochemie')) {
+                    // Show the table cells
+                    ['biochemie-header', 'mol_masse-header', 'aminos-header', 'oligo-header', 'glyko-header', 'bind-header', 'enzym-header', 'mol_masse', 'aminos', 'oligo', 'glyko', 'bind', 'enzym'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'table-cell';
+                    });
+
+                    // Display data for Biochemie
+                    document.getElementById('mol_masse').textContent = data['Biochemie']['Molekulare Masse'];
+                    document.getElementById('aminos').textContent = data['Biochemie']['Aminosäuren'];
+                    document.getElementById('oligo').textContent = data['Biochemie']['Oligomerisierung'];
+                    document.getElementById('glyko').textContent = data['Biochemie']['Glykolisierung'];
+                    document.getElementById('bind').textContent = data['Biochemie']['Bindungsmotiv'];
+                    document.getElementById('enzym').textContent = data['Biochemie']['Enzymfunktion'];
+                } else {
+                    // If Biochemie checkbox is unchecked, hide the table data
+                    ['biochemie-header', 'mol_masse-header', 'aminos-header', 'oligo-header', 'glyko-header', 'bind-header', 'enzym-header', 'mol_masse', 'aminos', 'oligo', 'glyko', 'bind', 'enzym'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'none';
+                    });
+                }
+
+                // table funktionen
+                if (categories.includes('Funktion')) {
+                    // Show the table cells
+                    ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'table-cell';
+                    });
+
+                    // Display data for Funktion
+                    document.getElementById('synth_gewebe').textContent = data['Funktion']['Synthetisierendes Gewebe'];
+                    document.getElementById('elek').textContent = data['Funktion']['Elektrophorese'];
+                    document.getElementById('immun').textContent = data['Funktion']['Immunsystem'];
+                    document.getElementById('haupt').textContent = data['Funktion']['Hauptfunktion'];
+
+                } else {
+                    // If Funktion checkbox is unchecked, hide the table data
+                    ['funktionen-header', 'synth_gewebe-header', 'elek-header', 'immun-header', 'haupt-header', 'synth_gewebe', 'elek', 'immun', 'haupt'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'none';
+                    });
+                }
+            
+                // table diagnostik
+                 if (categories.includes('Diagnostik')) {
+                    // Show the table cells
+                    ['diagnostik-header', 'biomat-header', 'ref-header', 'hohe_werte-header', 'niedrige_werte-header', 'biomat', 'ref', 'hohe_werte', 'niedrige_werte'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'table-cell';
+                    });
+
+                    // Display data for Diagnostik
+                    document.getElementById('biomat').textContent = data['Diagnostik']['Biomaterial'];
+                    document.getElementById('ref').textContent = data['Diagnostik']['Referenzbereich'];
+                    document.getElementById('hohe_werte').textContent = data['Diagnostik']['Erhöhte Werte'];
+                    document.getElementById('niedrige_werte').textContent = data['Diagnostik']['Erniedrigte Werte'];
+                } else {
+                    // If Diagnbostik checkbox is unchecked, hide the table data
+                    ['diagnostik-header', 'biomat-header', 'ref-header', 'hohe_werte-header', 'niedrige_werte-header', 'biomat', 'ref', 'hohe_werte', 'niedrige_werte'].forEach(cat => {
+                        document.getElementById(cat).style.display = 'none';
+                    });
+                }
+
+                // data abreicherung
+
+                if (categories.includes('Abreicherung')) {
+                    var abreicherungData = data['Abreicherung'];
+                    if (abreicherungData) {
+                        document.getElementById('abreicherung-section').style.display = 'block';
+                        document.getElementById('abr-header').style.display = 'block';
+
+                        var abreicherungBoxes = document.getElementById('abreicherung-boxes');
+                        abreicherungBoxes.innerHTML = ''; // Clear previous content
+
+                        // Check if the Abreicherung data is an array or a single object
+                        if (Array.isArray(abreicherungData)) {
+                            // If it's an array, create boxes for each entry
+                            abreicherungData.forEach(function(entry) {
+                                createAbreicherungBox(abreicherungBoxes, entry);
+                            });
+                        } else {
+                            // If it's a single object, create a box for that entry
+                            createAbreicherungBox(abreicherungBoxes, abreicherungData);
+                        }
+                    } else {
+                        document.getElementById('abreicherung-section').style.display = 'none';
+                    }
+                } else {
+                    document.getElementById('abreicherung-section').style.display = 'none';
+                }
             }
-        } else {
-            document.getElementById('abreicherung-section').style.display = 'none';
-        } 
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
 }
 
 function showSuggestions() {
@@ -413,6 +504,12 @@ function selectSuggestion(selectedValue) {
 
 
 function neuerEintrag() {
+    // falls vorher gesucht wurde und keine Einträge vorhanden sind, muss Nachricht aus GUI entfernt werden
+    document.querySelector('.infoNoEntries').style.display = 'none';
+    document.querySelector('.infoSimilarEntries').style.display = 'none';
+    document.getElementById("dodoCookie").style.display = 'none';
+    document.getElementById("infoNoSearch").style.display = 'none';
+
     // Hide elements from containers 2, 3, and 4
     document.querySelector('.container2').style.display = 'none';
     document.querySelector('.container3').style.display = 'none';
@@ -424,6 +521,9 @@ function neuerEintrag() {
 }
 
 function goBackToOriginal() {
+    document.getElementById("dodoEntryEmpty").style.display = 'none';
+    document.getElementById("dodoEntryExists").style.display = 'none';
+
     // Show elements from containers 2, 3, and 4
     document.querySelector('.container2').style.display = 'flex';
     document.querySelector('.container3').style.display = 'flex';
@@ -432,6 +532,16 @@ function goBackToOriginal() {
     // Hide the new content
     document.querySelector('.new-entry').style.display = 'none';
     document.querySelector('.container5').style.display = 'none';
+}
+
+function acceptInfoEntry() {
+    var entryInfo = document.getElementById("dodoEntryExists");
+    entryInfo.style.display = 'none';
+}
+
+function acceptInfoEmpty() {
+    var entryInfo = document.getElementById("dodoEntryEmpty");
+    entryInfo.style.display = 'none';
 }
 
 function submitForm() {
@@ -448,7 +558,13 @@ function submitForm() {
         .then(response => response.json())
         .then(data => {
             if (data.exists) {
-                alert("Dieser Eintrag existiert bereits.");
+                var entryInfo = document.getElementById("dodoEntryExists");
+                entryInfo.style.display = 'block';
+                entryInfo.style.position = 'fixed';
+                entryInfo.style.bottom = '0';
+                entryInfo.style.paddingBottom = '100px';
+                entryInfo.style.zIndex = '1001';
+                                
             } else {
                 displayNewEntryMessage();
             }
@@ -457,7 +573,12 @@ function submitForm() {
             console.error('Error:', error);
         });
     } else {
-        alert("Bitte gib einen Namen für den Parameter ein");
+        var entryInfo = document.getElementById("dodoEntryEmpty");
+        entryInfo.style.display = 'block';
+        entryInfo.style.position = 'fixed';
+        entryInfo.style.bottom = '0';
+        entryInfo.style.paddingBottom = '100px';
+        entryInfo.style.zIndex = '1001';
         return false;
     }
 }
@@ -515,7 +636,6 @@ function displayNewEntryMessage() {
         }
 
         location.reload();
-        //goBackToOriginal();
 
     }
 }

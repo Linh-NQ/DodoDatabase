@@ -28,6 +28,10 @@ td input, textarea {
     width: 300px;
 }
 
+li {
+    line-height: 0.5;
+}
+
 .additional-info {
     font-style: italic;
     font-size: 12px;
@@ -53,6 +57,29 @@ td input, textarea {
     display: none;
 }
 
+.info-eintrag {
+    background-image: url('https://github.com/Linh-NQ/DodoDatabase/blob/main/static/images/spechblase.png?raw=true');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 400px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.info-eintrag .p4 {
+    padding-left: 100px;
+    padding-top: 0px;
+    margin-top: -20px;
+}
+
+.sprechblase-container {
+    display: none;
+}
+
 /* Überschrift */
 .container1 {
     background-color: #2D3E4E;
@@ -72,12 +99,36 @@ td input, textarea {
 
 /* Filteroptionen */
 .container3 {
-    flex: 1;
+    flex: 0;
     background-color: #E8ECEB;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding-bottom: 20px;
+}
+
+.infoNoEntries, .infoSimilarEntries {
+    position: absolute;
+    color: #2D3E4E;
+    background-color: #E8ECEB;
+    display: none;
+    margin-top: 350px;
+    font-size: 13px;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 1600px;
+    height: 50vh;
+    max-height: 50vh;
+}
+
+.infoNoEntries p, .infoSimilarEntries p {
+    padding-left: 40%;
+}
+
+ul {
+    max-width: 80%;
+    margin: 0 auto;
+    padding: 0;
 }
 
 /* Output */
@@ -87,7 +138,6 @@ td input, textarea {
     padding-top: 20px;
     height: 550px;
 }
-
 
 .container5 {
     flex: 1;
