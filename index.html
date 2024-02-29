@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <div class="container1">
+        <h1>Willkommen zur Dodo-Datenbank</h1>
+        <p class="p1">Hier kannst du Informationen zu verschiedenen Laborparametern erhalten.</p>
+    </div>
+    <div class="container2">
+        <p class="p2">Suchbegriff:</p>
+        <div class="relative-container">
+            <input id="user-input" type="text" oninput="showSuggestions()">
+            <div class="dropdown-content" id="suggestions"></div>
+        </div>
+        <button onclick="executePythonFunction()" class="action-button">Suche</button>
+        <button onclick="neuerEintrag()" class="action-button">Neuer Eintrag</button>
+    </div>
+    <div class="new-entry" style="display: none;">
+        <button onclick="goBackToOriginal()" class="action-button right-aligned">Zurück</button>
+        <p class="newpage-header">Neuer Eintrag</p>
+    </div>
+    <div class="container3">
+        <div class="checkbox-option">
+            <input type="checkbox" id="biochemie" name="category" value="Biochemie">
+            <label class="checkbox-label" for="biochemie">Biochemie</label>
+        </div>
+        <div class="checkbox-option">
+            <input type="checkbox" id="funktion" name="category" value="Funktion">
+            <label class="checkbox-label" for="funktion">Funktion</label>
+        </div>
+        <div class="checkbox-option">
+            <input type="checkbox" id="diagnostik" name="category" value="Diagnostik">
+            <label class="checkbox-label" for="diagnostik">Diagnostik</label>
+        </div>
+        <div class="checkbox-option">
+            <input type="checkbox" id="analytik" name="category" value="Analytik">
+            <label class="checkbox-label" for="analytik">Analytik</label>
+        </div>
+        <div class="checkbox-option">
+            <input type="checkbox" id="abreicherung" name="category" value="Abreicherung">
+            <label class="checkbox-label" for="abreicherung">Abreicherung</label>
+        </div>
+    </div>
+    <div class="infoNoEntries">
+        <p>Keine Einträge gefunden</p>
+    </div>
+    <div class="infoSimilarEntries">
+        <p>Keine Einträge gefunden, dafür aber:</p>
+    </div>
+    <div class="container4">
+        <div class="data-container">
+            <div id="allgemein-plus-dodo">
+                <div class="category-section" id="allgemein-section">
+                    <h2 id="allg-header" class="table-header1">Allgemein <button class="edit-button" id="edit-allgemein" onclick="editSection('allgemein-section', 'edit-allgemein')">Edit</button></h2>
+                    <table>
+                        <tr>
+                            <th id="name-header" class="table-header2">Name</th>
+                            <td id="name"></td>
+                        </tr>
+                        <tr>
+                            <th id="namen-header" class="table-header2">Weitere Namen</th>
+                            <td id="namen"></td>
+                        </tr>
+                        <tr>
+                            <th id="abk-header" class="table-header2">Abkürzungen</th>
+                            <td id="abk"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="talking-dodo-container" id="theDodoTalks">
+                    <div class="info-suche">
+                        <p class="p4">Für deinen Suchbegriff <br> gibt es keine Vorschläge? <br> Klick trotzdem mal auf "Suche".</p>
+                        <p class="p5">(Vielleicht hat dieser eine <br> andere Bezeichung.)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="category-section" id="biochemie-section">
+                <h2 id="biochemie-header" class="table-header1">Biochemie <button class="edit-button" id="edit-biochemie" onclick="editSection('biochemie-section', 'edit-biochemie')">Edit</button></h2>
+                <table>
+                    <tr>
+                        <th id="mol_masse-header" class="table-header2">Molekulare Masse</th>
+                        <td id="mol_masse"></td>
+                    </tr>
+                    <tr>
+                        <th id="aminos-header" class="table-header2">Aminosäuren</th>
+                        <td id="aminos"></td>
+                    </tr>
+                    <tr>
+                        <th id="oligo-header" class="table-header2">Oligomerisierung</th>
+                        <td id="oligo"></td>
+                    </tr>
+                    <tr>
+                        <th id="glyko-header" class="table-header2">Glykolisierung</th>
+                        <td id="glyko"></td>
+                    </tr>
+                    <tr>
+                        <th id="bind-header" class="table-header2">Bindungsmotiv</th>
+                        <td id="bind"></td>
+                    </tr>
+                    <tr>
+                        <th id="enzym-header" class="table-header2">Enzymfunktion</th>
+                        <td id="enzym"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="category-section" id="funktion-section">
+                <h2 id="funktionen-header" class="table-header1">Funktion <button class="edit-button" id="edit-funktion" onclick="editSection('funktion-section', 'edit-funktion')">Edit</button></h2>
+                <table>
+                    <tr>
+                        <th id="synth_gewebe-header" class="table-header2">Synthetisierendes Gewebe</th>
+                        <td id="synth_gewebe"></td>
+                    </tr>
+                    <tr>
+                        <th id="elek-header" class="table-header2">Elektrophorese</th>
+                        <td id="elek"></td>
+                    </tr>
+                    <tr>
+                        <th id="immun-header" class="table-header2">Immunsystem</th>
+                        <td id="immun"></td>
+                    </tr>
+                    <tr>
+                        <th id="haupt-header" class="table-header2">Hauptfunktion</th>
+                        <td id="haupt"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="category-section" id="diagnostik-section">
+                <h2 id="diagnostik-header" class="table-header1">Diagnostik <button class="edit-button" id="edit-diagnostik" onclick="editSection('diagnostik-section', 'edit-diagnostik')">Edit</button></h2>
+                <table>
+                    <tr>
+                        <th id="biomat-header" class="table-header2">Biomaterial</th>
+                        <td id="biomat"></td>
+                    </tr>
+                    <tr>
+                        <th id="ref-header" class="table-header2">Referenzbereich</th>
+                        <td id="ref"></td>
+                    </tr>
+                    <tr>
+                        <th id="hohe_werte-header" class="table-header2">Erhöhte Werte</th>
+                        <td id="hohe_werte"></td>
+                    </tr>
+                    <tr>
+                        <th id="niedrige_werte-header" class="table-header2">Erniedrigte Werte</th>
+                        <td id="niedrige_werte"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="category-section" id="analytik-section">
+                <h2 id="analytik-header" class="table-header1">Analytik</h2>
+                <table>               
+                    <tr id="analytik-t-header" class="table-header2-ana">
+                        <th></th>
+                        <th>Labor</th>
+                        <th>Parameterbezeichnung</th>
+                        <th>Methode</th>
+                        <th>Messsystem</th>
+                        <th>Hersteller</th>
+                        <th>Preis</th>
+                    </tr>
+                    <tbody id="analytik-data"></tbody>
+                </table>
+            </div>
+
+            <div class="category-section" id="abreicherung-section">
+                <h2 id="abr-header" class="table-header1">Abreicherung <button class="edit-button" id="methode-neu" onclick="neueMethode()">Neue Methode</button></h2>
+                <div id="abreicherung-scroll-container" class="abreicherung-scroll-container">
+                    <div id="abreicherung-boxes" class="abreicherung-container"></div>
+                </div>
+            </div>
+            <button id="deleteEntryButton" class="confirmation-button" onclick="deleteEntry()">Eintrag löschen</button>
+        </div>
+        <p class="p3" id="error-message" style="display: none;">
+            Die Datenbank konnte nicht vollständig geupdatet werden. Bitte LQu Bescheid geben.
+        </p>   
+    </div>
+
+    <div class="container5">
+        <div class="data-container">
+            <table>
+                <tr>
+                    <th id="new_allg-header" class="table-header1-new">Allgemein</th>
+                </tr>
+                <tr>
+                    <th id="new_name-header" class="table-header2-new">Name</th>
+                    <td><input type="text" id="new_name" required></td>
+                </tr>
+                <tr>
+                    <th id="new_namen-header" class="table-header2-new">Weitere Namen</th>
+                    <td><input type="text" id="new_names"></td>
+                </tr>
+                <tr>
+                    <th id="new_abk-header" class="table-header2-new">Abkürzungen</th>
+                    <td><input type="text" id="new_abk"></td>
+                </tr>
+                <tr>
+                    <th id="new_biochemie-header" class="table-header1-new">Biochemie</th>
+                </tr>
+                <tr>
+                    <th id="new_mol_masse-header" class="table-header2-new">Molekulare Masse</th>
+                    <td><input type="text" id="new_molmasse"></td>
+                </tr>
+                <tr>
+                    <th id="new_aminos-header" class="table-header2-new">Aminosäuren</th>
+                    <td><input type="text" id="new_aminos"></td>
+                </tr>
+                <tr>
+                    <th id="new_oligo-header" class="table-header2-new">Oligomerisierung</th>
+                    <td><input type="text" id="new_oligo"></td>
+                </tr>
+                <tr>
+                    <th id="new_glyko-header" class="table-header2-new">Glykolisierung</th>
+                    <td><input type="text" id="new_glyko"></td>
+                </tr>
+                <tr>
+                    <th id="new_bind-header" class="table-header2-new">Bindungsmotiv</th>
+                    <td><input type="text" id="new_bind"></td>
+                </tr>
+                <tr>
+                    <th id="new_enzym-header" class="table-header2-new">Enzymfunktion</th>
+                    <td><input type="text" id="new_enzym"></td>
+                </tr>
+                <tr>
+                    <th id="new_funktionen-header" class="table-header1-new">Funktion</th>
+                </tr>
+                <tr>
+                    <th id="new_synth_gewebe-header" class="table-header2-new">Synthetisierendes Gewebe</th>
+                    <td><input type="text" id="new_synthgew"></td>
+                </tr>
+                <tr>
+                    <th id="new_elek-header" class="table-header2-new">Elektrophorese</th>
+                    <td><input type="text" id="new_elek"></td>
+                </tr>
+                <tr>
+                    <th id="new_immun-header" class="table-header2-new">Immunsystem</th>
+                    <td><input type="text" id="new_immun"></td>
+                </tr>
+                <tr>
+                    <th id="new_haupt-header" class="table-header2-new">Hauptfunktion</th>
+                    <td><textarea type="text" id="new_haupt"></textarea></td>
+                </tr>
+                <tr>
+                    <th id="new_diagnostik-header" class="table-header1-new">Diagnostik</th>
+                </tr>
+                <tr>
+                    <th id="new_biomat-header" class="table-header2-new">Biomaterial</th>
+                    <td><input type="text" id="new_biomat"></td>
+                </tr>
+                <tr>
+                    <th id="new_ref-header" class="table-header2-new">Referenzbereich</th>
+                    <td><input type="text" id="new_ref"></td>
+                </tr>
+                <tr>
+                    <th id="new_hohe_werte-header" class="table-header2-new">Erhöhte Werte</th>
+                    <td><textarea type="text" id="new_hohewerte"></textarea></td>
+                </tr>
+                <tr>
+                    <th id="new_niedrige_werte-header" class="table-header2-new">Erniedrigte Werte</th>
+                    <td><textarea type="text" id="new_niedrigewerte"></textarea></td>
+                </tr>
+                <tr>
+                    <th id="new_abr-header" class="table-header1-new">Abreicherung</th>
+                </tr>
+                <tr>
+                    <th id="new_methodenname_ab-header" class="table-header2-new">Methodenname</th>
+                    <td><textarea id="new_methodenname_ab"></textarea></td>
+                </tr>
+                <tr>
+                    <th id="new_methode_ab-header" class="table-header2-new">Methode</th>
+                    <td><textarea id="new_methodeab"></textarea></td>
+                </tr>
+            </table>
+            <div class="save-button-container">
+                <button class="action-button" onclick="submitForm()">Speichern</button>
+            </div> 
+        </div> 
+    </div>
+
+    <footer>
+        <img src="static/images/dodo.png" alt="Dodo-Logo" class="footer-logo">
+        <div class="footer-content">
+            <p>in.vent Diagnostica GmbH</p>
+            <p class="copyright">&copy; TeamDodo. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="customPopupMethode" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p>Bist du sicher, dass du speichern möchtest?</p>
+            <button class="confirmation-button" id="confirmYesMethode">Ja</button>
+            <button class="confirmation-button" id="confirmNoMethode">Nein</button>
+        </div>
+    </div>
+
+    <div id="customPopup" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p>Bist du sicher, dass du speichern möchtest?</p>
+            <button class="confirmation-button" id="confirmYes">Ja</button>
+            <button class="confirmation-button" id="confirmNo">Nein</button>
+        </div>
+    </div>
+
+    <div id="customPopupAb" class="custom-popup">
+        <div class="popup-content-ab">
+            <div class="textareas-wrapper">
+                <textarea id="title-textarea"></textarea>
+                <textarea id="description-textarea"></textarea>
+            </div>
+            <button class="confirmation-button" id="methode-löschen" onclick="methodeLöschen()">Löschen</button>
+            <button class="confirmation-button" id="methode-speichern">Speichern</button>
+            <button class="confirmation-button" id="methode-cancel" onclick="cancelNeueMethode()">Zurück</button>
+        </div>
+    </div>
+
+    <div id="customPopupAbNew" class="custom-popup">
+        <div class="popup-content-ab">
+            <div class="textareas-wrapper">
+                <textarea id="default-title-textarea">Neue Methode</textarea>
+                <textarea id="default-description-textarea">Beschreibung</textarea>
+            </div>
+            <button class="confirmation-button" id="methode-speichern-new">Speichern</button>
+            <button class="confirmation-button" id="methode-cancel" onclick="cancelNeueMethode()">Zurück</button>
+        </div>
+    </div>
+
+    <div id="popupLöschen" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p>Bist du sicher, dass du den Eintrag löschen möchtest?</p>
+            <button class="confirmation-button" id="confirmYesDelete">Ja</button>
+            <button class="confirmation-button" id="confirmNoDelete">Nein</button>
+        </div>
+    </div>
+
+    <div id="popupNeuerEintrag" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p>Juhu, ein neuer Eintrag! <br> Soll dieser jetzt gespeichert werden?</p>
+            <button class="confirmation-button" id="confirmYesNewEntry">Ja</button>
+            <button class="confirmation-button" id="confirmNoNewEntry">Nein</button>
+        </div>
+    </div>
+
+    <div id="popupEintragLöschen" class="custom-popup" style="display: none;">
+        <div class="popup-content">
+            <p class="achtung-info"><strong>*** Achtung! ***</strong></p>
+            <p>Du bist dabei, den Eintrag zu löschen.</p>
+            <p class="additional-info">Zum Löschen tippe "Dodos are the best" ein.</p>
+            <input type="text" id="deleteCheck">
+            <button class="confirmation-button" id="confirmDelete">Löschen</button>
+            <button class="confirmation-button" id="doNotDelete">Zurück</button>
+        </div>
+    </div>
+
+    <div class="sprechblase-container" id="dodoEntryExists">
+        <div class="info-eintrag">
+            <p class="p4">Dieser Eintrag existiert bereits.</p>
+            <button class="cancel-button" id="okInfoEintrag" onclick="acceptInfoEntry()">OK</button>
+        </div>
+    </div>
+
+    <div class="sprechblase-container" id="dodoEntryEmpty">
+        <div class="info-eintrag">
+            <p class="p4">Bitte gib einen Namen für den Parameter ein.</p>
+            <button class="cancel-button" id="okInfoEmpty" onclick="acceptInfoEmpty()">OK</button>
+        </div>
+    </div>
+
+    <div class="sprechblase-container" id="dodoCookie">
+        <div class="info-eintrag">
+            <p class="p4"></p>
+        </div>
+    </div>
+
+    <div class="sprechblase-container" id="infoNoSearch">
+        <div class="info-eintrag">
+            <p class="p4">Du hast wohl vergessen einen Suchbegriff einzugeben.</p>
+        </div>
+    </div>
+
+</body>
+</html>
