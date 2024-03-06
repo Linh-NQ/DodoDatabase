@@ -5,9 +5,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/alpha.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
+    <header>
+        <nav>
+            <a href="/">Startseite</a>
+            <a id="parameter-dropdown">Parameter</a>
+            <div id="parameter-dropdown-content">
+                <a href="{{ url_for('alpha') }}">alphabetisch</a>
+                <a href="{{ url_for('diagnostik') }}">nach Krankheitsbild</a>
+            </div>
+        </nav>
+    </header>
     <div class="container1">
         <h1>Willkommen zur Dodo-Datenbank</h1>
         <p class="p1">Hier kannst du Informationen zu verschiedenen Laborparametern erhalten.</p>

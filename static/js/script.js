@@ -8,6 +8,38 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+// Dropdown bei Parameter-Anzeige
+document.addEventListener("DOMContentLoaded", function() {
+    const parameterDropdown = document.getElementById("parameter-dropdown");
+    const parameterDropdownContent = document.getElementById("parameter-dropdown-content");
+    const nav = document.querySelector("nav");
+
+    parameterDropdown.addEventListener("mouseenter", function() {
+        parameterDropdownContent.classList.add("show");
+    });
+
+    parameterDropdown.addEventListener("mouseleave", function() {
+        setTimeout(function() {
+            if (!parameterDropdownContent.matches(":hover")) {
+                parameterDropdownContent.classList.remove("show");
+            }
+        }, 200); // Adjust the delay time as needed
+    });
+
+    parameterDropdownContent.addEventListener("mouseleave", function() {
+        setTimeout(function() {
+            if (!parameterDropdown.matches(":hover")) {
+                parameterDropdownContent.classList.remove("show");
+            }
+        }, 200); // Adjust the delay time as needed
+    });
+
+    nav.addEventListener("mouseleave", function() {
+        parameterDropdownContent.classList.remove("show");
+    });
+});
+
+
 
 function createAbreicherungBox(container, entry) {
     var box = document.createElement('div');
@@ -945,3 +977,28 @@ function deleteEntry() {
         });        
     }
 }
+
+
+var link = localStorage.getItem("link");
+var inputParameter = localStorage.getItem("inputParameter");
+// Navigieren auf Startseite, nachdem auf einen Link in alpha.html geklick wurde
+if (link) {
+    document.addEventListener("DOMContentLoaded", function() {
+        var userInput = document.getElementById('user-input');
+        userInput.value = inputParameter;
+        executePythonFunction();
+    });
+
+}
+
+
+
+
+
+
+
+
+
+
+
+

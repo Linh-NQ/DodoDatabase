@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/alpha.js') }}"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Startseite</a>
+            <a id="parameter-dropdown">Parameter</a>
+            <div id="parameter-dropdown-content">
+                <a href="{{ url_for('alpha') }}">alphabetisch</a>
+                <a href="{{ url_for('diagnostik') }}">nach Krankheitsbild</a>
+            </div>
+        </nav>
+    </header>
+    <div class="container1">
+        <h1>Willkommen zur Dodo-Datenbank</h1>
+        <p class="p1">Hier kannst du Informationen zu verschiedenen Laborparametern erhalten.</p>
+    </div>
+    <div class="letter-buttons">
+        <button class="letter-button" id="btnA">A</button>
+        <button class="letter-button" id="btnB">B</button>
+        <button class="letter-button" id="btnC">C</button>
+        <button class="letter-button" id="btnD">D</button>
+        <button class="letter-button" id="btnE">E</button>
+        <button class="letter-button" id="btnF">F</button>
+        <button class="letter-button" id="btnG">G</button>
+        <button class="letter-button" id="btnH">H</button>
+        <button class="letter-button" id="btnI">I</button>
+        <button class="letter-button" id="btnJ">J</button>
+        <button class="letter-button" id="btnK">K</button>
+        <button class="letter-button" id="btnL">L</button>
+        <button class="letter-button" id="btnM">M</button>
+        <button class="letter-button" id="btnN">N</button>
+        <button class="letter-button" id="btnO">O</button>
+        <button class="letter-button" id="btnP">P</button>
+        <button class="letter-button" id="btnQ">Q</button>
+        <button class="letter-button" id="btnR">R</button>
+        <button class="letter-button" id="btnS">S</button>
+        <button class="letter-button" id="btnT">T</button>
+        <button class="letter-button" id="btnU">U</button>
+        <button class="letter-button" id="btnV">V</button>
+        <button class="letter-button" id="btnW">W</button>
+        <button class="letter-button" id="btnX">X</button>
+        <button class="letter-button" id="btnY">Y</button>
+        <button class="letter-button" id="btnZ">Z</button>
+    </div>
+
+    <div class="container4" id="alpha-container">
+    </div>
+
+    <footer>
+        <img src="static/images/dodo.png" alt="Dodo-Logo" class="footer-logo">
+        <div class="footer-content">
+            <p>in.vent Diagnostica GmbH</p>
+            <p class="copyright">&copy; TeamDodo. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="sprechblase-container" id="infoAlpha">
+        <div class="info-eintrag">
+            <p class="p4">Klick gerne auf den Begriff für mehr Infos über den Parameter.</p>
+        </div>
+    </div>
+
+</body>
+</html>
