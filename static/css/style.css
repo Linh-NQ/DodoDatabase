@@ -313,7 +313,7 @@ table {
 }
 
 .table-header2 {
-    font-size: 18px;
+    font-size: 17px;
     background-color: #E8ECEB;
     color: #8CBDB9;
     padding: 5px;
@@ -329,7 +329,7 @@ table {
 }
 
 .table-header2-new {
-    font-size: 18px;
+    font-size: 17px;
     background-color: #E8ECEB;
     color: #8CBDB9;
     padding: 5px;
@@ -362,6 +362,7 @@ td {
     color: #2D3E4E;
     padding: 5px;
     text-align: left;
+    padding-left: 60px;
 }
 
 .special-cell {

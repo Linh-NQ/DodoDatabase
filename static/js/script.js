@@ -555,6 +555,7 @@ function neuerEintrag() {
 function goBackToOriginal() {
     document.getElementById("dodoEntryEmpty").style.display = 'none';
     document.getElementById("dodoEntryExists").style.display = 'none';
+    document.getElementById("dodoEntrySpecial").style.display = 'none';
 
     // Show elements from containers 2, 3, and 4
     document.querySelector('.container2').style.display = 'flex';
@@ -576,42 +577,57 @@ function acceptInfoEmpty() {
     entryInfo.style.display = 'none';
 }
 
+function acceptInfoSpecial() {
+    var entryInfo = document.getElementById("dodoEntrySpecial");
+    entryInfo.style.display = 'none';
+}
+
 function submitForm() {
     var newName = document.getElementById("new_name").value;
 
-    if (newName.length > 0) {
-        fetch('/entry_check', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ paraName: newName }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.exists) {
-                var entryInfo = document.getElementById("dodoEntryExists");
-                entryInfo.style.display = 'block';
-                entryInfo.style.position = 'fixed';
-                entryInfo.style.bottom = '0';
-                entryInfo.style.paddingBottom = '100px';
-                entryInfo.style.zIndex = '1001';
-                                
-            } else {
-                displayNewEntryMessage();
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+    // Überprüfen, ob Bezeichnung mit einer Zahl oder einem Sonderzeichen anfängt
+    if (/\d|[^\w]/.test(newName.charAt(0))) {
+        var dodoSpecial = document.getElementById('dodoEntrySpecial');
+        dodoSpecial.style.display = 'block';
+        dodoSpecial.style.position = 'fixed';
+        dodoSpecial.style.bottom = '0';
+        dodoSpecial.style.paddingBottom = '100px';
+        dodoSpecial.style.zIndex = '1001';
     } else {
-        var entryInfo = document.getElementById("dodoEntryEmpty");
-        entryInfo.style.display = 'block';
-        entryInfo.style.position = 'fixed';
-        entryInfo.style.bottom = '0';
-        entryInfo.style.paddingBottom = '100px';
-        entryInfo.style.zIndex = '1001';
-        return false;
+        if (newName.length > 0) {
+            fetch('/entry_check', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ paraName: newName }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.exists) {
+                    var entryInfo = document.getElementById("dodoEntryExists");
+                    entryInfo.style.display = 'block';
+                    entryInfo.style.position = 'fixed';
+                    entryInfo.style.bottom = '0';
+                    entryInfo.style.paddingBottom = '100px';
+                    entryInfo.style.zIndex = '1001';
+                                    
+                } else {
+                    displayNewEntryMessage();
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            var entryInfo = document.getElementById("dodoEntryEmpty");
+            entryInfo.style.display = 'block';
+            entryInfo.style.position = 'fixed';
+            entryInfo.style.bottom = '0';
+            entryInfo.style.paddingBottom = '100px';
+            entryInfo.style.zIndex = '1001';
+            return false;
+        } 
     }
 }
 
@@ -687,6 +703,8 @@ function editSection(sectionId, editButtonId) {
         cell.appendChild(input);
     });
 
+    var inputsBefore = section.querySelectorAll('textarea');
+    var inputNameBefore = inputsBefore[0].value;  
 
     var editButton = document.getElementById(editButtonId);
     editButton.style.display = 'none'; // Hide the edit button
@@ -700,52 +718,97 @@ function editSection(sectionId, editButtonId) {
     cancelButton.classList.add('cancel-button'); // Add a class for styling
 
     saveButton.onclick = function () {
-        var customPopupSave = document.getElementById('customPopup');
-        customPopupSave.style.display = 'flex';
+        var dodoMeckertDisplay = document.getElementById('dodoMeckert');
+        dodoMeckertDisplay.style.display = 'none';
+        var dodoSonderzeichenDisplay = document.getElementById('dodoSonderzeichen');
+        dodoSonderzeichenDisplay.style.display = 'none';
 
-        var confirmYes = document.getElementById('confirmYes');
-        var confirmNo = document.getElementById('confirmNo');
-
-        confirmYes.onclick = function () {
-            // Handle "Yes" button click action
-            var input_values = []
-            inputs = section.querySelectorAll('textarea');
-            inputs.forEach(function (input, index) {
-                var cell = dataCells[index];
-                cell.textContent = input.value;
-                input_values.push(input.value)
-            });
-            saveButton.style.display = 'none';
-            cancelButton.style.display = 'none';
-            editButton.style.display = 'inline-block';
-            customPopupSave.style.display = 'none'; // Hide the popup after action
-
-            // In Datenbank speichern
-            saveInDatabase()
-
-            function saveInDatabase(title, description) {
-                var userInput = document.getElementById('user-input').value;
-                fetch('/save_in_database', {
+        // zuerst Überprüfen, ob durch Änderung des Parameternamens ein anderer überschrieben wird
+        var inputsAfter = section.querySelectorAll('textarea');
+        var inputNameAfter = inputsAfter[0].value;
+        if (section.id === 'allgemein-section') {
+            if (inputNameBefore !== inputNameAfter) {
+                fetch('/entry_double_check', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ tableName: sectionId, newEntries: input_values, input: userInput}),
+                    body: JSON.stringify({ paraNameAfter: inputNameAfter }),
                 })
-                .then(response => response.text())
+                .then(response => response.json())
+                .then(data => {
+                    if (data.exists) {
+                        dodoMeckertDisplay.style.display = 'block';
+                    } else {
+                        if (data.sonderzeichen) {
+                            dodoSonderzeichenDisplay.style.display = 'block';
+                        } else {
+                            overwriteDatabase();
+                        }
+                    }
+                })
                 .catch(error => {
                     console.error('Error:', error);
-                });
+                });                          
+            } else {
+                overwriteDatabase();
             }
-        };
+        } else {
+            overwriteDatabase();
+        }
 
-        confirmNo.onclick = function () {
-            // Handle "No" button click action or close the popup
-            customPopupSave.style.display = 'none'; // Hide the popup without taking action
-        };
+        function overwriteDatabase() {
+            var customPopupSave = document.getElementById('customPopup');
+            customPopupSave.style.display = 'flex';
+
+            var confirmYes = document.getElementById('confirmYes');
+            var confirmNo = document.getElementById('confirmNo');
+
+            confirmYes.onclick = function () {
+                // Handle "Yes" button click action
+                var input_values = []
+                var inputs = section.querySelectorAll('textarea');
+                inputs.forEach(function (input, index) {
+                    var cell = dataCells[index];
+                    cell.textContent = input.value;
+                    input_values.push(input.value)
+                });
+                saveButton.style.display = 'none';
+                cancelButton.style.display = 'none';
+                editButton.style.display = 'inline-block';
+                customPopupSave.style.display = 'none'; // Hide the popup after action
+
+                // In Datenbank speichern
+                saveInDatabase()
+
+                function saveInDatabase(title, description) {
+                    var userInput = document.getElementById('user-input').value;
+                    fetch('/save_in_database', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ tableName: sectionId, newEntries: input_values, input: userInput}),
+                    })
+                    .then(response => response.text())
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                }
+            };
+
+            confirmNo.onclick = function () {
+                // Handle "No" button click action or close the popup
+                customPopupSave.style.display = 'none'; // Hide the popup without taking action
+            };            
+        }
     };
 
     cancelButton.onclick = function () {
+        var dodoMeckertDisplay = document.getElementById('dodoMeckert');
+        dodoMeckertDisplay.style.display = 'none';
+        var dodoSonderzeichenDisplay = document.getElementById('dodoSonderzeichen');
+        dodoSonderzeichenDisplay.style.display = 'none';
         // Reset the data to the original state when clicking cancel
         dataCells.forEach(function (cell, index) {
             cell.textContent = originalData[index];
@@ -982,11 +1045,12 @@ function deleteEntry() {
 var link = localStorage.getItem("link");
 var inputParameter = localStorage.getItem("inputParameter");
 // Navigieren auf Startseite, nachdem auf einen Link in alpha.html geklick wurde
-if (link) {
+if (link==='true') {
     document.addEventListener("DOMContentLoaded", function() {
         var userInput = document.getElementById('user-input');
         userInput.value = inputParameter;
         executePythonFunction();
+        localStorage.setItem("link", "false");
     });
 
 }

@@ -99,7 +99,6 @@ document.addEventListener("DOMContentLoaded", function() {
                     ul1.appendChild(li);
                     link.addEventListener('click', function(event) {
                         linkClicked(event, entry);
-                        localStorage.setItem("inputParameter", entry);
                     });
                 });
 
@@ -113,8 +112,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     li.appendChild(link);
                     ul2.appendChild(li);
                     link.addEventListener('click', function(event) {
-                        linkClicked(event, entry);
-                        localStorage.setItem("inputParameter", entry);
+                        linkClicked(event, entry);                        
                     });
                 });
 
@@ -127,10 +125,10 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 
-localStorage.setItem("link", link);
-var link = false;
+localStorage.setItem("link", "false");
 function linkClicked(event, entry) {
-    link = true;
+    localStorage.setItem("link", "true");
+    localStorage.setItem("inputParameter", entry);
 }
 
 

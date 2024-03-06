@@ -5,7 +5,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
-    <script src="{{ url_for('static', filename='js/alpha.js') }}"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
@@ -71,11 +70,11 @@
                     <h2 id="allg-header" class="table-header1">Allgemein <button class="edit-button" id="edit-allgemein" onclick="editSection('allgemein-section', 'edit-allgemein')">Edit</button></h2>
                     <table>
                         <tr>
-                            <th id="name-header" class="table-header2">Name</th>
+                            <th id="name-header" class="table-header2">Name (engl)</th>
                             <td id="name"></td>
                         </tr>
                         <tr>
-                            <th id="namen-header" class="table-header2">Weitere Namen</th>
+                            <th id="namen-header" class="table-header2">Weitere Namen (de)</th>
                             <td id="namen"></td>
                         </tr>
                         <tr>
@@ -88,6 +87,16 @@
                     <div class="info-suche">
                         <p class="p4">Für deinen Suchbegriff <br> gibt es keine Vorschläge? <br> Klick trotzdem mal auf "Suche".</p>
                         <p class="p5">(Vielleicht hat dieser eine <br> andere Bezeichung.)</p>
+                    </div>
+                </div>
+                <div class="talking-dodo-container" id="dodoMeckert">
+                    <div class="info-suche">
+                        <p class="p4"><br>Na na na, <br> kein Überschreiben von <br> anderen Daten, bitte.</p>
+                    </div>
+                </div>
+                <div class="talking-dodo-container" id="dodoSonderzeichen">
+                    <div class="info-suche">
+                        <p class="p4"><br>Die Parameterbezeichnung <br> muss mit einem <br> Buchstaben beginnen.</p>
                     </div>
                 </div>
             </div>
@@ -202,12 +211,13 @@
                     <th id="new_allg-header" class="table-header1-new">Allgemein</th>
                 </tr>
                 <tr>
-                    <th id="new_name-header" class="table-header2-new">Name</th>
+                    <th id="new_name-header" class="table-header2-new">Name (engl)</th>
                     <td><input type="text" id="new_name" required></td>
                 </tr>
                 <tr>
-                    <th id="new_namen-header" class="table-header2-new">Weitere Namen</th>
-                    <td><input type="text" id="new_names"></td>
+                    <th id="new_namen-header" class="table-header2-new">Weitere Namen (de)</th>
+                    <td><textarea id="new_names"></textarea>
+</td>
                 </tr>
                 <tr>
                     <th id="new_abk-header" class="table-header2-new">Abkürzungen</th>
@@ -384,6 +394,13 @@
         </div>
     </div>
 
+    <div class="sprechblase-container" id="dodoEntrySpecial">
+        <div class="info-eintrag">
+            <p class="p4">Die Parameterbezeichnung muss mit einem Buchstaben beginnen.</p>
+            <button class="cancel-button" id="okInfoEmpty" onclick="acceptInfoSpecial()">OK</button>
+        </div>
+    </div>
+
     <div class="sprechblase-container" id="dodoCookie">
         <div class="info-eintrag">
             <p class="p4"></p>
@@ -392,7 +409,7 @@
 
     <div class="sprechblase-container" id="infoNoSearch">
         <div class="info-eintrag">
-            <p class="p4">Du hast wohl vergessen einen Suchbegriff einzugeben.</p>
+            <p class="p4">Holaaa, bitte gib einen Suchbegriff ein.</p>
         </div>
     </div>
 
