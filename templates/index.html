@@ -6,6 +6,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </head>
 <body>
     <header>
@@ -199,11 +201,16 @@
             </div>
             <button id="deleteEntryButton" class="confirmation-button" onclick="deleteEntry()">Eintrag löschen</button>
         </div>
-        <p class="p3" id="error-message" style="display: none;">
-            Die Datenbank konnte nicht vollständig geupdatet werden. Bitte LQu Bescheid geben.
-        </p>   
-    </div>
 
+        <div class="chatbot">
+            <p class="p2">Sprich mit dem Dodo</p>
+            <div id="chat_output" class="chat-output"></div>
+            <form id="user_input_form">
+                <input type="text" id="user_input" placeholder="Gib hier Deine Nachricht ein...">
+                <button class="edit-button" type="submit">Senden</button>
+            </form>
+        </div>
+    </div>
     <div class="container5">
         <div class="data-container">
             <table>
@@ -216,8 +223,7 @@
                 </tr>
                 <tr>
                     <th id="new_namen-header" class="table-header2-new">Weitere Namen (de)</th>
-                    <td><textarea id="new_names"></textarea>
-</td>
+                    <td><textarea id="new_names"></textarea></td>
                 </tr>
                 <tr>
                     <th id="new_abk-header" class="table-header2-new">Abkürzungen</th>
