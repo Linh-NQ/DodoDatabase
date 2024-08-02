@@ -14,13 +14,15 @@ import pandas as pd
 import sqlite3
 import glob
 from sqlalchemy import create_engine
+import os
 
 
 # In[2]:
 
 
 # Verbindung mit Datenbank
-conn = sqlite3.connect('datenbank.db')
+database_path = os.path.abspath(os.path.join(os.getcwd(), '..', 'datenbank.db'))
+conn = sqlite3.connect(database_path)
 cursor = conn.cursor()
 
 # Datenbank mit Einträgen der Messsystem-Tabelle füllen
@@ -44,15 +46,30 @@ for sheet in sheet_names:
 for i in range(len(tables)):
     if i != 6:
         tables[i].columns = tables[i].iloc[1].tolist()
-        tables[i] = tables[i][['Parameter', 'Angebots- Preis \n(excl. MwSt)', 
-                               'Methode', 'Gerät', 'Hersteller/ Gerät']]
-        tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller']
+        try:
+            tables[i] = tables[i][['Parameter', 'Angebots- Preis (excl. MwSt)', 
+                                   'Methode', 'Gerät', 'Hersteller/ Gerät',
+                                   'jüngste Bestä-tigung/ Stand/ Aktualisierungs-datum']]
+        except:
+            # wegen Formatierungsproblemen beim Import von Excel
+            tables[i] = tables[i][['Parameter', 'Angebots- Preis (excl. MwSt)', 
+                                   'Methode', 'Gerät', 'Hersteller/ Gerät',
+                                   'jüngste Bestätigung der Gültigkeit/ Aktualisierungs-datum']]
+        tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller', 'Datum']
         tables[i] = tables[i].iloc[2:]
     else:
         tables[i].columns = tables[i].iloc[2].tolist()
-        tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis \n(excl. MwSt)',
-                               'measuring method', 'measuring System', 'manufacturer of measuring system']]
-        tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller']
+        try:
+            tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis (excl. MwSt)',
+                                   'measuring method', 'measuring System',
+                                   'manufacturer of measuring system',
+                                   'jüngste Bestä-tigung/ Stand/ Aktualisierungs-datum']]
+        except:
+            tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis (excl. MwSt)',
+                                   'measuring method', 'measuring System',
+                                   'manufacturer of measuring system',
+                                   'jüngste Bestätigung der Gültigkeit/ Aktualisierungs-datum']
+        tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller', 'Datum']
         tables[i] = tables[i].iloc[3:]
 
 
@@ -91,6 +108,15 @@ query = '''INSERT INTO abreicherung (name, methodenname, methode)
 cursor.execute(query)
 
 conn.commit()
+
+
+# In[3]:
+
+
+conn = sqlite3.connect('datenbank.db')
+cursor = conn.cursor()
+query = '''SELECT name FROM namen;'''
+cursor.execute(query)
 
 
 # In[ ]:

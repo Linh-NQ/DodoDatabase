@@ -7,14 +7,16 @@
 # Erstellen der Dodo-Datenbank
 
 
-# In[1]:
+# In[5]:
 
 
 import pandas as pd
 import sqlite3
 import glob
 from sqlalchemy import create_engine
-conn = sqlite3.connect('datenbank.db')
+import os
+database_path = os.path.abspath(os.path.join(os.getcwd(), '..', 'datenbank.db'))
+conn = sqlite3.connect(database_path)
 cursor = conn.cursor()
 
 
@@ -67,7 +69,8 @@ query = ''' CREATE TABLE IF NOT EXISTS analytik (
             methode VARCHAR,
             messsystem VARCHAR,
             hersteller VARCHAR,
-            preis VARCHAR);'''
+            preis VARCHAR,
+            datum VARCHAR);'''
 cursor.execute(query)
 
 # Tabelle mit Infos zur Abreicherung (hier sind ebenfalls mehrere Einträge möglich)
@@ -115,9 +118,6 @@ query = '''INSERT INTO abreicherung (name, methodenname, methode)
 cursor.execute(query)
 
 conn.commit()
-
-
-# In[ ]:
 
 
 

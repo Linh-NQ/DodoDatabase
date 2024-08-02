@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
-
-
-# Update der Datenbank
-
-
-# In[83]:
+# In[1]:
 
 
 import sys
@@ -17,7 +11,7 @@ import glob
 from sqlalchemy import create_engine
 
 
-# In[85]:
+# In[28]:
 
 
 # Verbindung zur Datenbank
@@ -28,7 +22,7 @@ def update_database():
     """ Aktualisiert Datenbank mit den Daten aus der Messystemstabelle """
     try:
         # Alle Excel-Dateien aus dem Verzeichnis lesen
-        files = glob.glob('O:/Datenmanagement/Befunde und Messsysteme/Messsysteme/1_Auftragslabore\*.xlsx*')
+        files = glob.glob('O:/Datenmanagement/Befunde und Messsysteme/Messsysteme/1_Auftragslabore/*.xlsx*')
         # Den Dateipfad der Datei 'Messsysteme und Preise aller Auftragslabore' finden
         for i in range(len(files)):
             if 'Messsysteme und Preise aller Auftragslabore' in files[i]:
@@ -50,22 +44,38 @@ def update_database():
 
         # Tabellen richtig ordnen und formatieren
         # bis auf LADR sind alle Tabellen gleich strukturiert
+
         for i in range(len(tables)):
             if i != 6:
                 # Spaltennamen auf Basis der zweiten Zeile festlegen
                 tables[i].columns = tables[i].iloc[1].tolist()
                 # Nur die relevanten Spalten behalten und umbenennen
-                tables[i] = tables[i][['Parameter', 'Angebots- Preis \n(excl. MwSt)', 
-                                       'Methode', 'Gerät', 'Hersteller/ Gerät']]
-                tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller']
+                try:
+                    tables[i] = tables[i][['Parameter', 'Angebots- Preis (excl. MwSt)', 
+                                           'Methode', 'Gerät', 'Hersteller/ Gerät',
+                                           'jüngste Bestä-tigung/ Stand/ Aktualisierungs-datum']]
+                except:
+                    # wegen Formatierungsproblemen beim Import von Excel
+                    tables[i] = tables[i][['Parameter', 'Angebots- Preis (excl. MwSt)', 
+                                           'Methode', 'Gerät', 'Hersteller/ Gerät',
+                                           'jüngste Bestätigung der Gültigkeit/ Aktualisierungs-datum']]                    
+                tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller', 'Datum']
                 # Die ersten zwei Zeilen entfernen
                 tables[i] = tables[i].iloc[2:]
             else:
                 # Spezielle Behandlung für die 7. Tabelle (LADR)
                 tables[i].columns = tables[i].iloc[2].tolist()
-                tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis \n(excl. MwSt)',
-                                       'measuring method', 'measuring System', 'manufacturer of measuring system']]
-                tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller']
+                try:
+                    tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis (excl. MwSt)',
+                                           'measuring method', 'measuring System',
+                                           'manufacturer of measuring system',
+                                           'jüngste Bestä-tigung/ Stand/ Aktualisierungs-datum']]
+                except:
+                    tables[i] = tables[i][['laboratory parameter', 'Angebots- Preis (excl. MwSt)',
+                                           'measuring method', 'measuring System',
+                                           'manufacturer of measuring system',
+                                           'jüngste Bestätigung der Gültigkeit/ Aktualisierungs-datum']]                    
+                tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller', 'Datum']
                 tables[i] = tables[i].iloc[3:]
 
         # Liste aller Parameter aus der Datenbank abrufen
@@ -98,7 +108,7 @@ def update_database():
             # Wenn der Parameter nicht gefunden wurde, alternative Namen durchsuchen
             if not para_found:
                 if parameter_more[p] != '':
-                    para_more = parameter_more[p].split(',')
+                    para_more = str(parameter_more[p]).split(',')
                     para_more = [para.strip() for para in para_more]
                     for i in range(len(tables)):
                         for j in range(len(tables[i])):
@@ -115,7 +125,7 @@ def update_database():
                 # Wenn alternative Namen auch nicht gefunden wurden, Abkürzungen durchsuchen
                 if not para_found_more:
                     if parameter_abk[p] != '':
-                        para_abk = parameter_abk[p].split(',')
+                        para_abk = str(parameter_abk[p]).split(',')
                         para_abk = [para.strip() for para in para_abk]                        
                         for i in range(len(tables)):
                             for j in range(len(tables[i])):
@@ -135,7 +145,7 @@ def update_database():
                 para_flag = False
                 # Zeilen finden, in denen der Parameter vorkommt
                 for i in range(len(table)):
-                    if (parameter in table.iloc[i,0].split('-')) | (parameter in table.iloc[i,0].split('/')):
+                    if (parameter in str(table.iloc[i,0]).split('-')) | (parameter in str(table.iloc[i,0]).split('/')):
                         parameter_rows.append(i)
                         para_flag = True
                 if not para_flag:
@@ -165,6 +175,8 @@ def update_database():
         return True
     except Exception as e:
         # Bei Fehlern die Fehlermeldung ausgeben
+        import traceback
+        print(traceback.print_exc())
         return False
     
 if __name__ == "__main__":

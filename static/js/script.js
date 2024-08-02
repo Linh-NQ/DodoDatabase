@@ -472,6 +472,11 @@ function executePythonFunction() {
                             preisCell.textContent = entry['preis'];
                             row.appendChild(preisCell);
 
+                            // Eine neue Zelle für den datum-Wert wird erstellt, mit Daten gefüllt und der Zeile hinzugefügt
+                            var datumCell = document.createElement('td');
+                            datumCell.textContent = entry['datum'];
+                            row.appendChild(datumCell);
+
                             // Hinzufügen spezieller Klassen zu den Zellen (jede Zelle erhält die CSS-Klasse special-cell)
                             laborCell.classList.add('special-cell');
                             labNameCell.classList.add('special-cell');
@@ -479,6 +484,7 @@ function executePythonFunction() {
                             messsystemCell.classList.add('special-cell');
                             herstellerCell.classList.add('special-cell');
                             preisCell.classList.add('special-cell');
+                            datumCell.classList.add('special-cell');
 
                             // Hinzufügen der Zeile zum Tabellenkörper
                             tableBody.appendChild(row);
