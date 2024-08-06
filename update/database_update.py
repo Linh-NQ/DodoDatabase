@@ -9,9 +9,10 @@ import pandas as pd
 import sqlite3
 import glob
 from sqlalchemy import create_engine
+from datetime import datetime
 
 
-# In[28]:
+# In[7]:
 
 
 # Verbindung zur Datenbank
@@ -78,6 +79,27 @@ def update_database():
                 tables[i].columns = ['Parameter', 'Preis', 'Methode', 'Messsystem', 'Hersteller', 'Datum']
                 tables[i] = tables[i].iloc[3:]
 
+        # Datumsformat anpassen
+        def convert_date(date_obj):
+            if isinstance(date_obj, str):
+                try:
+                    # Versuchen, das Datum im Format 'YYYY-MM-DD HH:MM:SS' zu parsen
+                    parsed_date = datetime.strptime(date_obj, "%Y-%m-%d %H:%M:%S")
+                    # In das gewünschte Format umwandeln
+                    return parsed_date.strftime("%d.%m.%Y")
+                except ValueError:
+                    # Falls ein ValueError auftritt, Datum unverändert zurückgeben
+                    return date_obj
+            elif isinstance(date_obj, datetime):
+                # Wenn es sich bereits um ein datetime-Objekt handelt, ins gewünschte Format umwandeln
+                return date_obj.strftime("%d.%m.%Y")
+            else:
+                # Für andere Fälle (z.B. keine Datumswerte) unverändert zurückgeben
+                return date_obj
+    
+        for i in range(len(tables)):
+            tables[i]['Datum'] = tables[i]['Datum'].apply(convert_date)
+        
         # Liste aller Parameter aus der Datenbank abrufen
         query = "SELECT * FROM namen"
         engine = create_engine("sqlite:///O:/Forschung & Entwicklung/Entwicklung/Software-Entwicklung/Dodo_Datenbank/datenbank.db")
@@ -105,38 +127,39 @@ def update_database():
                         para_found = True
                         parameter = parameter_liste[p]
                         break
-            # Wenn der Parameter nicht gefunden wurde, alternative Namen durchsuchen
-            if not para_found:
-                if parameter_more[p] != '':
-                    para_more = str(parameter_more[p]).split(',')
-                    para_more = [para.strip() for para in para_more]
-                    for i in range(len(tables)):
-                        for j in range(len(tables[i])):
-                            break_loop = False
-                            for para in para_more:
-                                if para in str(tables[i].iloc[j,0]):
+            # alternative Namen durchsuchen
+            if parameter_more[p] != '':
+                para_more = str(parameter_more[p]).split(',')
+                para_more = [para.strip() for para in para_more]
+                for i in range(len(tables)):
+                    for j in range(len(tables[i])):
+                        break_loop = False
+                        for para in para_more:
+                            if para in str(tables[i].iloc[j,0]):
+                                if sheet_names[i] not in labor:
                                     labor.append(sheet_names[i])
                                     para_found_more = True
                                     parameter = para
                                     break_loop = True
                                     break
-                            if break_loop:
-                                break
+                        if break_loop:
+                            break
                 # Wenn alternative Namen auch nicht gefunden wurden, Abkürzungen durchsuchen
-                if not para_found_more:
-                    if parameter_abk[p] != '':
-                        para_abk = str(parameter_abk[p]).split(',')
-                        para_abk = [para.strip() for para in para_abk]                        
-                        for i in range(len(tables)):
-                            for j in range(len(tables[i])):
-                                break_loop_more = False
-                                for para in para_abk:
-                                    if para in str(tables[i].iloc[j,0]):
+                if parameter_abk[p] != '':
+                    para_abk = str(parameter_abk[p]).split(',')
+                    para_abk = [para.strip() for para in para_abk]                        
+                    for i in range(len(tables)):
+                        for j in range(len(tables[i])):
+                            break_loop_more = False
+                            for para in para_abk:
+                                if para in str(tables[i].iloc[j,0]):
+                                    if sheet_names[i] not in labor:
                                         labor.append(sheet_names[i])
                                         parameter = para
-                                        break
-                                if break_loop:
-                                    break
+                                        break_loop_more = True # flag, dass vorzeitig aus dem eins übergeordneten Loop ausgebrochen werden kann, da der Parameter gefunden wurde
+                                        break # Break aus Loop
+                            if break_loop_more:
+                                break # Break aus Loop
 
             # Ablesen der Messsysteme, Tests etc.
             for lab in labor:
@@ -148,6 +171,16 @@ def update_database():
                     if (parameter in str(table.iloc[i,0]).split('-')) | (parameter in str(table.iloc[i,0]).split('/')):
                         parameter_rows.append(i)
                         para_flag = True
+                        # Suche erfolgt auch für Alternativnamen und Abkürzungen
+                    for para in para_more:
+                        if para in table.iloc[i,0]:
+                            if i not in parameter_rows:
+                                parameter_rows.append(i)
+                    for para in para_abk:
+                        if para in table.iloc[i,0]:
+                            if i not in parameter_rows:
+                                parameter_rows.append(i)
+
                 if not para_flag:
                     for i in range(len(table)):
                         if parameter in table.iloc[i,0]:
@@ -162,13 +195,14 @@ def update_database():
                     meth = table_parameter.iloc[i,2]
                     messsys = table_parameter.iloc[i,3]
                     herst = table_parameter.iloc[i,4]
+                    datum = table_parameter.iloc[i,5]
                     try:
                         pr = round(table_parameter.iloc[i,1], 2)
                     except:
                         pr = table_parameter.iloc[i,2]
-                    query = '''INSERT INTO analytik (name, name_labor, labor, methode, messsystem, hersteller, preis)
-                               VALUES (?, ?, ?, ?, ?, ?, ?);'''
-                    cursor.execute(query, (parameter_richtig, lab_name, lab, meth, messsys, herst, pr))
+                    query = '''INSERT INTO analytik (name, name_labor, labor, methode, messsystem, hersteller, preis, datum)
+                               VALUES (?, ?, ?, ?, ?, ?, ?, ?);'''
+                    cursor.execute(query, (parameter_richtig, lab_name, lab, meth, messsys, herst, pr, datum))
 
         # Änderungen in der Datenbank speichern
         conn.commit()

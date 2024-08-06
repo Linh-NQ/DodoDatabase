@@ -196,7 +196,7 @@ function openCustomEditPopup(entry, callback) {
         confirmPopup.style.display = 'none';
 
         // Aufruf der Funktion (Beschreibung s. unten), um die Datenbank zu aktualisieren
-        updateDatabase(titleTextarea.value, descriptionTextarea.value);
+        updateDatabase(titleTextarea.value, oldTitle, descriptionTextarea.value);
     };
 
     // Funktionalität für den Nein-Button im Bestätigungs-Popup
@@ -244,7 +244,7 @@ Die Funktion nimmt zwei Argumente:
 title: der bearbeitete Methodenname
 description: die bearbeitete Methode
 */
-function updateDatabase(title, description) {
+function updateDatabase(title, oldTitle, description) {
     // Eingabewert des Users abrufen
     var userInput = document.getElementById('user-input').value;
     // Verwenden von Fetch API, um eine POST-Anfrage zu senden
@@ -992,6 +992,11 @@ function editSection(sectionId, editButtonId) {
                 function saveInDatabase(title, description) {
                     // Der Wert aus dem Eingabefeld wird ausgelesen und in eine Variable gespeichert
                     var userInput = document.getElementById('user-input').value;
+                    // Einlesen der Alternativnamen
+                    var weitereNamen = document.getElementById('namen').textContent;
+                    // Einlesen der Abkürzungen
+                    var abkuerzungen = document.getElementById('abk').textContent;
+                    console.log(abkuerzungen);
 
                     // fetch-Aufruf, um POST-Anfrage an URL /save_in_database zu senden
                     fetch('/save_in_database', {
@@ -1000,7 +1005,7 @@ function editSection(sectionId, editButtonId) {
                             'Content-Type': 'application/json',
                         },
                         // Anfrage enthält die Informationen Tabellenname in der Datenbank (entspricht dem bearbeiteten Abschnitt), bearbeiteten Einträge und dem User Input im Suchfeld (Parametername)
-                        body: JSON.stringify({ tableName: sectionId, newEntries: input_values, input: userInput}),
+                        body: JSON.stringify({ tableName: sectionId, newEntries: input_values, input: userInput, namen: weitereNamen, abk: abkuerzungen}),
                     })
                     .then(response => response.text())
                     .catch(error => {
@@ -1114,12 +1119,12 @@ function neueMethode() {
         customPopupAbNew.style.display = 'none';
 
         // Aufruf der Funktion zum Aktualisieren der Datenbank
-        updateDatabase(methodenName, methode);
+        updateDatabaseSave(methodenName, methode);
 
     };
 
     // Funktion aktualisiert Datenbank
-    function updateDatabase(title, description) {
+    function updateDatabaseSave(title, description) {
         // Extrahieren des Paramternamens
         var userInput = document.getElementById('user-input').value;
         // fetch-Aufruf, um POST-Anfrage an URL /save_new_method zu senden
@@ -1212,11 +1217,11 @@ function methodeLöschen() {
         findElementByTextContent(methodenName);
 
         // Datenbank wird nach dem Löschen der Abreicherungsmethode aktualisiert
-        updateDatabase(methodenName);
+        updateDatabaseDelete(methodenName);
     };
 
     // Funktion zum Senden einer Anfrage an den Server, damit die Abreicherungsmethode gelöscht und die Datenbank aktualisiert wird wird
-    function updateDatabase(title) {
+    function updateDatabaseDelete(title) {
         // Abrufen des User Inputs
         var userInput = document.getElementById('user-input').value;
         // Senden einer POST-Anfrage
